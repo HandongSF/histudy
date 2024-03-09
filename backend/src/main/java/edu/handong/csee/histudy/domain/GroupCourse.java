@@ -5,35 +5,27 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupCourse extends BaseTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long groupCourseId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private StudyGroup studyGroup;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "study_group_id")
+  private StudyGroup studyGroup;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Course course;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "course_id")
+  private Course course;
 
-    @OneToMany(mappedBy = "groupCourse")
-    private List<ReportCourse> reportCourses = new ArrayList<>();
+  public GroupCourse(StudyGroup studyGroup, Course course) {
+    this.studyGroup = studyGroup;
+    this.course = course;
 
-    public GroupCourse(StudyGroup studyGroup, Course course) {
-        this.studyGroup = studyGroup;
-        this.course = course;
-
-        studyGroup.getGroupCourses().add(this);
-    }
-
-    public boolean isNotInUse() {
-        return this.reportCourses.isEmpty();
-    }
+    studyGroup.getCourses().add(this);
+  }
 }
