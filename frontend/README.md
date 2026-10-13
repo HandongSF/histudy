@@ -50,12 +50,14 @@
 #### 프로젝트 설치
 
 ```
-git clone https://github.com/HGU-WALAB/histudy-fe.git
+git clone https://github.com/HandongSF/histudy.git
+cd histudy/frontend
 ```
 
 #### 패키지 설치
 
 ```
+corepack enable   # package.json의 packageManager에 지정된 pnpm 8 사용
 pnpm install
 ```
 
@@ -90,7 +92,7 @@ pnpm test
 
 ## 기여하기
 
-기여를 환영합니다! 자세한 내용은 **이슈** https://github.com/HGU-WALAB/histudy-fe/issues/94 을 참조하십시오.
+기여를 환영합니다! 자세한 내용은 **이슈** https://github.com/HandongSF/histudy-fe/issues/94 을 참조하십시오.
 
 <br />
 

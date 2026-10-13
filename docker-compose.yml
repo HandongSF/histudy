@@ -1,7 +1,14 @@
 services:
   histudy-be:
     image: ${IMAGE_NAME:-histudy-be}:${IMAGE_TAG:-latest}
-    build: .
+    build:
+      context: .
+      args:
+        VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-}
+        VITE_BACK_BASE_URL: ${VITE_BACK_BASE_URL:-}
+        VITE_BACK_FILE_BASE_URL: ${VITE_BACK_FILE_BASE_URL:-}
+        VITE_CLOUD_FRONT_BASE_URL: ${VITE_CLOUD_FRONT_BASE_URL:-}
+        VITE_CLIENT_ID: ${VITE_CLIENT_ID:-}
     restart: unless-stopped
     ports:
       - "${HOST_PORT:-8080}:8080"

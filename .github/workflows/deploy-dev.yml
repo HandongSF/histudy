@@ -1,14 +1,10 @@
 name: Deploy Dev
 
+# Called from ci.yml after checks pass on main when backend/ or frontend/ changed.
+# Can also be run manually from the Actions tab.
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: ["main"]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
+  workflow_call:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,29 +14,62 @@ env:
   ACTIVE_PROFILE: ${{ vars.DEPLOY_ACTIVE_PROFILE || 'dev' }}
   CONFIG_PATH: ${{ vars.DEPLOY_CONFIG_PATH || '/etc/histudy-be/' }}
   IMAGE_NAME: ${{ vars.DEPLOY_IMAGE_NAME || 'histudy-be' }}
+  # Keep the compose project name from the former histudy-be repository so the
+  # existing containers and volumes (e.g. webapp_images) are reused, not recreated.
+  COMPOSE_PROJECT_NAME: ${{ vars.DEPLOY_COMPOSE_PROJECT_NAME || 'histudy-be' }}
 
 jobs:
   deploy:
     name: Deploy to dev
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
     runs-on: [self-hosted, HIStudy, dev]
-    timeout-minutes: 20
+    environment: dev
+    timeout-minutes: 30
+    concurrency:
+      group: deploy-dev
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Prepare deployment metadata
         shell: bash
         env:
-          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+          DEPLOY_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           echo "IMAGE_TAG=sha-${DEPLOY_SHA:0:7}" >> "$GITHUB_ENV"
 
-      - name: Build and deploy with Docker Compose
+      # Builds the frontend, bundles it into the backend jar. The running container
+      # is left untouched if the build fails. VITE_PUBLIC_URL and VITE_BACK_BASE_URL
+      # stay empty: the bundle is served from "/" and calls the API on the same origin.
+      - name: Build image
+        shell: bash
+        env:
+          VITE_BACK_FILE_BASE_URL: ${{ vars.VITE_BACK_FILE_BASE_URL }}
+          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+          docker compose build
+
+      - name: Restart container
         shell: bash
         run: |
           set -euo pipefail
-          docker compose up -d --build
+          docker compose up -d --no-build
+
+      # Keep the running image plus the most recent ones for rollback.
+      - name: Remove old images
+        shell: bash
+        env:
+          KEEP_IMAGES: 3
+        run: |
+          set -euo pipefail
+          # Newest first, excluding the image just deployed; skip KEEP_IMAGES-1 of them.
+          docker images "$IMAGE_NAME" --format '{{.CreatedAt}}|{{.Tag}}' \
+            | sort -r | cut -d'|' -f2 \
+            | { grep '^sha-' || true; } \
+            | { grep -vx "$IMAGE_TAG" || true; } \
+            | tail -n +"$KEEP_IMAGES" \
+            | while read -r tag; do
+                docker rmi "$IMAGE_NAME:$tag" || true
+              done

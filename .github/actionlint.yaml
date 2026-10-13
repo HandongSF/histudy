@@ -1,0 +1,5 @@
+# Custom labels of the self-hosted dev runner, for actionlint.
+self-hosted-runner:
+  labels:
+    - HIStudy
+    - dev

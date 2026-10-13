@@ -1,0 +1,9 @@
+# Repository-wide ignores. Area-specific rules live in backend/.gitignore and frontend/.gitignore.
+.DS_Store
+.idea/
+.vscode/
+.claude/settings.local.json
+.worktrees/
+.env
+.env.*
+!.env*.example

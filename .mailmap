@@ -1,0 +1,8 @@
+# Unifies author/committer identities for git log, shortlog and blame.
+# Format: Proper Name <proper@email> <email as recorded in commits>
+Sion Han <45687157+zionhann@users.noreply.github.com> <hanzion1108@gmail.com>
+Sion Han <45687157+zionhann@users.noreply.github.com> <its.zionhan@gmail.com>
+Ju Young Bae <76582732+juyoung88@users.noreply.github.com>
+Inhyuk Oh <49269218+ohinhyuk@users.noreply.github.com> <8156217@naver.com>
+Inhyuk Oh <49269218+ohinhyuk@users.noreply.github.com> <oinhyuk@oinhyeog-ui-MacBookPro.local>
+Inhyuk Oh <49269218+ohinhyuk@users.noreply.github.com>

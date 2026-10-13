@@ -49,4 +49,4 @@ HIStudy는 한동대학교 온라인 스터디그룹 관리 서비스입니다. 
 
 ## License
 
-HIStudy는 Apache License 2.0을 따릅니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+HIStudy는 Apache License 2.0을 따릅니다. 자세한 내용은 [LICENSE](../LICENSE) 파일을 참조하세요.
