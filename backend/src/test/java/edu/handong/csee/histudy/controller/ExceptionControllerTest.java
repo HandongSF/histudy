@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.handong.csee.histudy.dto.ExceptionResponse;
 import edu.handong.csee.histudy.exception.ForbiddenException;
 import edu.handong.csee.histudy.service.DiscordService;
@@ -20,6 +19,7 @@ import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
+import tools.jackson.databind.ObjectMapper;
 
 class ExceptionControllerTest {
 
