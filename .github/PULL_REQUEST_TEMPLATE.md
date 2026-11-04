@@ -1,5 +1,6 @@
 <!-- 제목: Conventional Commits 형식 `type(scope): 한국어 설명` (squash 머지 커밋 제목이 됩니다)
      본문은 diff를 열지 않은 리뷰어가 이해할 수 있게 기능·개념 수준으로 씁니다. 파일 경로는 쓰지 않습니다.
+     외부 기여자: 포크 PR의 AI 리뷰는 이전에 기여한 적이 있으면 자동으로, 처음이면 메인테이너가 확인한 뒤 실행됩니다.
      분량: 1000자 이내 (권장 배분 Intent ~250 / Changes ~350 / Decisions ~250 / Verification ~150) -->
 
 ## Intent

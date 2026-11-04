@@ -9,7 +9,7 @@ HIStudy 모노레포의 탐색 레이어입니다. 저장소 전반의 구조와
 | `backend/` | Spring Boot API 서버 (Java 17, Gradle) | `backend/AGENTS.md` |
 | `frontend/` | React + Vite 웹 클라이언트 (TypeScript, pnpm 8) | `frontend/AGENTS.md` |
 | `Dockerfile`, `docker-compose.yml` | 프런트엔드 빌드 결과를 백엔드 jar에 포함한 단일 이미지 빌드 | `docs/deploy.md` |
-| `.github/workflows/` | `ci.yml`(검사, 영역이 바뀐 `main` push는 개발 서버 배포까지), `deploy-dev.yml`(배포 재사용 워크플로), `claude-code-review.yml`(PR 자동 AI 리뷰, 포크 PR은 `ai-review` 라벨), `claude.yml`(`@claude` 멘션) | `docs/deploy.md` |
+| `.github/workflows/` | `ci.yml`(검사, 영역이 바뀐 `main` push는 개발 서버 배포까지), `deploy-dev.yml`(배포 재사용 워크플로), `claude-code-review.yml`(PR 자동 AI 리뷰, 포크 PR은 기존 기여자 자동·첫 기여자는 `ai-review` 라벨), `claude.yml`(`@claude` 멘션) | `docs/deploy.md` |
 | `.claude/skills/` | 프로젝트 Claude 스킬: `review`, `api-contract`, `verify`, `commit`, `pr` | 각 `SKILL.md` |
 | `docs/` | 저장소 공통 문서: 배포(`deploy.md`), 저장소 이전 기록(`migration/`) | - |
 
