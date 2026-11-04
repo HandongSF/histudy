@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.handong.csee.histudy.controller.form.BannerReorderForm;
 import edu.handong.csee.histudy.domain.Banner;
 import edu.handong.csee.histudy.domain.Role;
@@ -23,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -31,6 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(BannerAdminController.class)
 class BannerAdminControllerTest {
@@ -223,7 +223,7 @@ class BannerAdminControllerTest {
 
     when(bannerService.updateBanner(eq(2L), any(BannerCommand.class))).thenReturn(info);
 
-    MockHttpServletRequestBuilder requestBuilder =
+    var requestBuilder =
         multipart("/api/admin/banners/{bannerId}", 2L)
             .file(image)
             .param("label", "Updated Banner")
