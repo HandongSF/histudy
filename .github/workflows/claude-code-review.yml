@@ -1,0 +1,59 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    # One review per PR: the code-review plugin stops once Claude has commented, so later pushes would only burn a run.
+    # For a re-review, ask @claude: it reviews as a general Claude session (inline comments allowed), not via this plugin.
+    types: [opened, ready_for_review]
+  # Fork PRs cannot read secrets on pull_request. Members and returning contributors (a commit already in this repo)
+  # are reviewed automatically; first-time contributors wait for a maintainer to read the PR and add the ai-review label.
+  # A label added while the PR is a draft is honored when it becomes ready.
+  pull_request_target:
+    types: [opened, ready_for_review, labeled]
+
+jobs:
+  claude-review:
+    if: >-
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'pull_request_target' && !github.event.pull_request.draft &&
+       github.event.pull_request.head.repo.full_name != github.repository &&
+       ((github.event.action != 'labeled' &&
+         (contains(fromJSON('["MEMBER","COLLABORATOR","CONTRIBUTOR"]'), github.event.pull_request.author_association) ||
+          contains(github.event.pull_request.labels.*.name, 'ai-review'))) ||
+        (github.event.action == 'labeled' && github.event.label.name == 'ai-review')))
+    # Job level so that skipped runs of the other event do not cancel a running review.
+    concurrency:
+      group: claude-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write # removes the ai-review label; review comments use the Claude app token
+      issues: read
+      id-token: write
+
+    steps:
+      # No ref: pull_request_target must never check out untrusted fork code. The review reads the diff via gh.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+          plugins: 'code-review@claude-code-plugins'
+          prompt: '/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          settings: '{"effortLevel": "medium"}'
+          claude_args: '--model claude-opus-5-5 --allowedTools "mcp__github_inline_comment__create_inline_comment"'
+
+      - name: Remove ai-review label
+        if: always() && github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'ai-review')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --remove-label ai-review

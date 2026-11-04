@@ -9,7 +9,8 @@ HIStudy 모노레포의 탐색 레이어입니다. 저장소 전반의 구조와
 | `backend/` | Spring Boot API 서버 (Java 17, Gradle) | `backend/AGENTS.md` |
 | `frontend/` | React + Vite 웹 클라이언트 (TypeScript, pnpm 8) | `frontend/AGENTS.md` |
 | `Dockerfile`, `docker-compose.yml` | 프런트엔드 빌드 결과를 백엔드 jar에 포함한 단일 이미지 빌드 | `docs/deploy.md` |
-| `.github/workflows/` | `ci.yml`(검사, 영역이 바뀐 `main` push는 개발 서버 배포까지), `deploy-dev.yml`(배포 재사용 워크플로) | `docs/deploy.md` |
+| `.github/workflows/` | `ci.yml`(검사, 영역이 바뀐 `main` push는 개발 서버 배포까지), `deploy-dev.yml`(배포 재사용 워크플로), `claude-code-review.yml`(PR 자동 AI 리뷰, 포크 PR은 기존 기여자 자동·첫 기여자는 `ai-review` 라벨), `claude.yml`(`@claude` 멘션) | `docs/deploy.md` |
+| `.claude/skills/` | 프로젝트 Claude 스킬: `review`, `api-contract`, `verify`, `commit`, `pr` | 각 `SKILL.md` |
 | `docs/` | 저장소 공통 문서: 배포(`deploy.md`), 저장소 이전 기록(`migration/`) | - |
 
 ## 영역 간 계약
@@ -23,6 +24,7 @@ HIStudy 모노레포의 탐색 레이어입니다. 저장소 전반의 구조와
 - 영역별 명령은 해당 영역 디렉토리에서 실행합니다. 루트의 빌드 파일은 배포 이미지용입니다.
 - 한 영역 안에서 끝나는 변경은 그 영역 디렉토리 밖을 건드리지 않습니다.
 - CI는 변경된 영역만 검사합니다. 새 검사 잡을 추가할 때는 `ci.yml`의 `changes` 출력으로 조건을 걸고 `result` 잡의 `needs`에 추가합니다.
+- 리뷰는 `.claude/skills/review/SKILL.md`의 HIStudy 전용 항목을 함께 확인합니다.
 
 ## 빠른 명령어
 
