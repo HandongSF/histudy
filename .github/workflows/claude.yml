@@ -55,6 +55,19 @@ jobs:
       - name: Enable pnpm
         run: corepack enable
 
+      # The action checks out the PR head, so on fork PRs build scripts are untrusted: no build, test or git tools there.
+      - name: Detect fork PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || (github.event.issue.pull_request && github.event.issue.number) || '' }}
+        run: |
+          fork=false
+          if [ -n "$PR_NUMBER" ]; then
+            fork=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isCrossRepository --jq .isCrossRepository)
+          fi
+          echo "fork=$fork" >> "$GITHUB_OUTPUT"
+
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
@@ -68,4 +81,6 @@ jobs:
           settings: '{"effortLevel": "medium"}'
           claude_args: >-
             --model claude-opus-5-5
-            --allowedTools "Bash(./gradlew:*),Bash(pnpm:*),Bash(git:*),Bash(gh pr:*)"
+            ${{ steps.pr.outputs.fork == 'true'
+              && '--allowedTools "Bash(gh pr view:*),Bash(gh pr diff:*)"'
+              || '--allowedTools "Bash(./gradlew:*),Bash(pnpm:*),Bash(git:*),Bash(gh pr:*)"' }}
