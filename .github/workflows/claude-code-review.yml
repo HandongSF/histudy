@@ -5,7 +5,7 @@ on:
     # One review per PR: the code-review plugin stops once Claude has commented, so later pushes would only burn a run.
     # Ask for a re-review with an @claude comment.
     types: [opened, ready_for_review]
-  # Fork PRs cannot read secrets on pull_request; a maintainer opts in per push with the ai-review label.
+  # Fork PRs cannot read secrets on pull_request; a maintainer opts in with the ai-review label (first review only, like above).
   pull_request_target:
     types: [labeled]
 
