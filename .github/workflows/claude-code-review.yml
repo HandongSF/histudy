@@ -2,7 +2,9 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+    # One review per PR: the code-review plugin stops once Claude has commented, so later pushes would only burn a run.
+    # Ask for a re-review with an @claude comment.
+    types: [opened, ready_for_review]
   # Fork PRs cannot read secrets on pull_request; a maintainer opts in per push with the ai-review label.
   pull_request_target:
     types: [labeled]
