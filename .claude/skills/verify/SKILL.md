@@ -13,7 +13,7 @@ description: 변경된 영역(backend/frontend)을 감지해 해당 영역의 �
 2. 해당 영역만 실행합니다.
    - 백엔드: `cd backend && ./gradlew clean test`
    - 프런트엔드: `cd frontend && pnpm install --frozen-lockfile && pnpm exec tsc --noEmit && VITE_PUBLIC_URL= pnpm build`
-3. E2E(`pnpm test`)는 `.env.test`가 있을 때만 실행하고, 없으면 건너뛰었다고 적습니다.
+3. E2E는 `.env.test`가 있을 때만 `pnpm exec playwright install chromium`으로 브라우저를 준비한 뒤 `pnpm test`로 실행하고, 없으면 건너뛰었다고 적습니다.
 
 ## 결과
 

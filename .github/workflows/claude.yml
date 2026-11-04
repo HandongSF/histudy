@@ -85,5 +85,5 @@ jobs:
           claude_args: >-
             --model claude-opus-5-5
             ${{ steps.pr.outputs.fork == 'true'
-              && '--allowedTools "Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh issue view:*),Bash(gh issue list:*)" --disallowedTools "Bash(git add:*),Bash(git commit:*),Bash(git rm:*)"'
+              && '--allowedTools "Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh issue view:*),Bash(gh issue list:*)" --disallowedTools "Edit,MultiEdit,Write,NotebookEdit,Bash(git add:*),Bash(git commit:*),Bash(git rm:*)"'
               || format('--allowedTools "Bash(./gradlew:*),Bash(pnpm:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr checks:*),Bash(gh pr create:*),Bash(gh pr comment:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh api repos/{0}/pulls/*/comments/*/replies:*),mcp__github_inline_comment__create_inline_comment"', github.repository) }}
