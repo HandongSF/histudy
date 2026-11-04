@@ -55,7 +55,7 @@ jobs:
       - name: Enable pnpm
         run: corepack enable
 
-      # The action checks out the PR head, so on fork PRs build scripts are untrusted: no build, test or git tools there.
+      # The action checks out the PR head, so on fork PRs build scripts are untrusted: read-only tools there.
       - name: Detect fork PR
         id: pr
         env:
@@ -79,8 +79,11 @@ jobs:
             actions: read
 
           settings: '{"effortLevel": "medium"}'
+          # The action always adds Read/Glob/Grep, CI log tools and git add/commit/rm/push for commits.
+          # Here: read-only git and gh subcommands (no gh pr merge/close/review), build tools on same-repo PRs only,
+          # and on fork PRs the action's commit tools are denied so nothing from the fork can be pushed upstream.
           claude_args: >-
             --model claude-opus-5-5
             ${{ steps.pr.outputs.fork == 'true'
-              && '--allowedTools "Bash(gh pr view:*),Bash(gh pr diff:*)"'
-              || '--allowedTools "Bash(./gradlew:*),Bash(pnpm:*),Bash(git:*),Bash(gh pr:*)"' }}
+              && '--allowedTools "Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh issue view:*),Bash(gh issue list:*)" --disallowedTools "Bash(git add:*),Bash(git commit:*),Bash(git rm:*)"'
+              || format('--allowedTools "Bash(./gradlew:*),Bash(pnpm:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr checks:*),Bash(gh pr create:*),Bash(gh pr comment:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh api repos/{0}/pulls/*/comments/*/replies:*),mcp__github_inline_comment__create_inline_comment"', github.repository) }}
